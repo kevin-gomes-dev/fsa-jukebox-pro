@@ -2,13 +2,20 @@ import express from "express";
 const router = express.Router();
 export default router;
 
-import {
-  createPlaylist,
-  getPlaylistById,
-  getPlaylists,
-} from "#db/queries/playlists";
+import { createPlaylist, getPlaylistById, getPlaylists } from "#db/queries/playlists";
 import { createPlaylistTrack } from "#db/queries/playlists_tracks";
 import { getTracksByPlaylistId } from "#db/queries/tracks";
+import requireUser from "#middleware/requireUser";
+import { verifyToken } from "#utils/jwt";
+
+// router.get("/", verifyToken, (req, res, next) => {
+//   requireUser(req, res, next);
+// });
+
+// router.post("/", verifyToken, (req, res, next) => {
+//   console.log("a");
+//   requireUser(req, res, next);
+// });
 
 router.get("/", async (req, res) => {
   const playlists = await getPlaylists();
@@ -17,12 +24,12 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   if (!req.body) return res.status(400).send("Request body is required.");
-
+  console.log(req);
+  const userId = req.user.id;
   const { name, description } = req.body;
-  if (!name || !description)
-    return res.status(400).send("Request body requires: name, description");
+  if (!name || !description || userId) return res.status(400).send("Request body requires: name, description");
 
-  const playlist = await createPlaylist(name, description);
+  const playlist = await createPlaylist(name, description, userId);
   res.status(201).send(playlist);
 });
 

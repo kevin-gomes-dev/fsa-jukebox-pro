@@ -1,3 +1,4 @@
+// When to use verify user?
 import express from "express";
 const app = express();
 export default app;
@@ -6,13 +7,18 @@ import morgan from "morgan";
 
 import tracksRouter from "#api/tracks";
 import playlistsRouter from "#api/playlists";
+import userRouter from "#api/users";
+import requireUser from "#middleware/requireUser";
+import { verifyToken } from "#utils/jwt";
+import getUserFromToken from "#middleware/getUserFromToken";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
+app.use("/users", userRouter);
 app.use("/tracks", tracksRouter);
-app.use("/playlists", playlistsRouter);
+app.use("/playlists", requireUser, verifyToken, playlistsRouter);
 
 app.use((err, req, res, next) => {
   // A switch statement can be used instead of if statements
