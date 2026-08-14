@@ -16,9 +16,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
+app.use(getUserFromToken);
 app.use("/users", userRouter);
 app.use("/tracks", tracksRouter);
-app.use("/playlists", requireUser, verifyToken, playlistsRouter);
+app.use("/playlists", playlistsRouter);
 
 app.use((err, req, res, next) => {
   // A switch statement can be used instead of if statements

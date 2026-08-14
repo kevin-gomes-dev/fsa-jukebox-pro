@@ -17,9 +17,10 @@ export async function getUserByUsername(username, password) {
   const {
     rows: [user],
   } = await db.query(sql, [username]);
+  if (!user) return false;
   const verified = await bcrypt.compare(password, user.password);
-  if (user && verified) return user;
-  else return false;
+  if (verified) return user;
+  return false;
 }
 
 // Good login
@@ -27,6 +28,6 @@ export async function getUserById(id) {
   const SQL = `SELECT * FROM users WHERE id = $1 `;
   const {
     rows: [user],
-  } = await client.query(SQL, [id]);
+  } = await db.query(SQL, [id]);
   return user;
 }

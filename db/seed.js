@@ -22,7 +22,7 @@ async function seed() {
     const playlist = await createPlaylist(
       "Playlist " + i,
       "lorem ipsum playlist description",
-      Math.floor(1 + Math.random() * userCount),
+      i % 2 === 0 ? 1 : 2,
     );
     console.log(playlist);
   }
